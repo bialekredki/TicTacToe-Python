@@ -1,0 +1,5 @@
+width = 800
+height = 600
+fullscreen = False
+pvp_on_start = False
+console = False
