@@ -1,21 +1,56 @@
 # ----------------------IMPORTS---------------------------------------
-import pygame as pyg
-import ttt_board
 import math
-import ttt_console
+
+import pygame as pyg
+import pygame_menu as pygm
+
 import centeredText as ctxt
 import ttt_ai
-import pygame_menu
+import ttt_board
+import ttt_console
+
+
 # ----------------------------END OF IMPORTS--------------------------
 
+def setResolution(str_value:str,value:int):
+    global width, height
+    if value == 0:
+        width = 800
+        height = 600
+    elif value == 1:
+        width = 1280
+        height = 720
+    elif value == 2:
+        width = 1280
+        height = 1024
+
 def drawSideBar(main_font:pyg.font,turn:int):
-    display.blit(main_font.render("MENU", True, WHITE),(0,0))
+    display.blit(main_font.render("MENU", True, WHITE), (0,0))
+    menu_button_size = main_font.size("MENU")
+    if turn == 1:   xo = 'X'
+    else : xo = 'O'
+    display.blit(main_font.render("Player {}'s turn({})".format(turn,xo), True, WHITE), (0,menu_button_size[1]))
+    display.blit(main_font.render("Player 1 : {}".format(score[1]), True, WHITE), (width//2, 0))
+    display.blit(main_font.render("Player 1 : {}".format(score[2]), True, WHITE), (width // 2, menu_button_size[1]))
+    display.blit(main_font.render("Draw : {}".format(score[0]), True, WHITE), (width // 2, menu_button_size[1]*2))
+
+    return menu_button_size
+
 
 def mainMenu(main_font:pyg.font):
-    pass
+    close = False
+    while not close:
+        for event in pyg.event.get():
+            if event.type == pyg.MOUSEBUTTONDOWN:
+                close = True
+        display.fill(BLACK)
+        pyg.display.update()
+
+
 
 def endMenu(result:int=0):
     pass
+
 def drawGrid(grid_params, board, xo_font):
     state = board.getState()
     for x in range(board.size):
@@ -74,8 +109,7 @@ def run():
     while not closed:
         current_result = b.checkForEndgame()
         if current_result != -1:
-            if current_result == 0: print("Draw.")
-            else: print("---------------------------")
+            score[current_result] += 1
             game_number = game_number + 1
             return 0
         for event in pyg.event.get():
@@ -83,7 +117,7 @@ def run():
                 closed = True
                 pyg.display.quit()
                 pyg.quit()
-            elif event.type == pyg.MOUSEBUTTONDOWN and turn == 2:
+            elif event.type == pyg.MOUSEBUTTONDOWN:
                 pos = mousePositionToGridTile(grid_params, pyg.mouse.get_pos(), b.size)
                 if pos is not None:
                     b.update(turn, pos)
@@ -91,9 +125,13 @@ def run():
                         turn = 2
                     else:
                         turn = 1
+                elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[1]:
+                    print("XD")
+                    mainMenu(main_font)
 
+        display.fill(BLACK)
         drawGrid(grid_params, b, xo_font)
-        drawSideBar(main_font,0)
+        menu_button_size = drawSideBar(main_font,turn)
         pyg.display.update()
 
         clock.tick(60)
@@ -110,6 +148,7 @@ def run():
 
 
 WHITE = [255, 255, 255]
+BLACK = [0, 0, 0]
 img_x = 0
 img_o = 0
 width = 800

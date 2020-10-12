@@ -7,14 +7,13 @@ import math
 class AI:
     def __init__(self, player: int):
         self.ai_player = player
-        self.it = 0
 
-    def minimax(self, state: ttt_board.Board, player=None, depth=0, maximizer=True):
+    def minimax(self, state: ttt_board.Board, player=None, depth=0, maximizer=True, alpha = math.inf, beta = -math.inf):
         new_state = ttt_board.Board.copy(state)
         possible_moves = self.findPossibleMoves(new_state.getState())
         if len(possible_moves) == 9 and new_state.size == 3:    return 4
         if len(possible_moves) == 16 and new_state.size: return 1
-        self.it += 1
+
         results = []
         if player is None : player = self.ai_player
         if player == 1:
