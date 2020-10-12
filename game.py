@@ -10,7 +10,6 @@ import pygame_menu
 
 def drawSideBar(main_font:pyg.font,turn:int):
     display.blit(main_font.render("MENU", True, WHITE),(0,0))
-    text_size = main_font.size("MENU")
 
 def mainMenu(main_font:pyg.font):
     pass
