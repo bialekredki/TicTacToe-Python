@@ -1,8 +1,9 @@
 # ----------------------IMPORTS---------------------------------------
 import math
+import time
 
 import pygame as pyg
-import pygame_menu as pygm
+
 
 import centeredText as ctxt
 import ttt_ai
@@ -31,7 +32,7 @@ def drawSideBar(main_font:pyg.font,turn:int):
     else : xo = 'O'
     display.blit(main_font.render("Player {}'s turn({})".format(turn,xo), True, WHITE), (0,menu_button_size[1]))
     display.blit(main_font.render("Player 1 : {}".format(score[1]), True, WHITE), (width//2, 0))
-    display.blit(main_font.render("Player 1 : {}".format(score[2]), True, WHITE), (width // 2, menu_button_size[1]))
+    display.blit(main_font.render("Player 2 : {}".format(score[2]), True, WHITE), (width // 2, menu_button_size[1]))
     display.blit(main_font.render("Draw : {}".format(score[0]), True, WHITE), (width // 2, menu_button_size[1]*2))
 
     return menu_button_size
@@ -85,7 +86,7 @@ def run():
     pyg.display.set_caption("TicTacToe")
     closed = False
     clock = pyg.time.Clock()
-    b = ttt_board.Board(size=3)
+    b = ttt_board.Board(size=start_size)
     turn = 1
     xo_font = pyg.font.SysFont("Comic Sans", 270 - 70 * (b.size - 3))
     grid_params = {
@@ -117,7 +118,7 @@ def run():
                 closed = True
                 pyg.display.quit()
                 pyg.quit()
-            elif event.type == pyg.MOUSEBUTTONDOWN:
+            elif event.type == pyg.MOUSEBUTTONDOWN and turn == 2:
                 pos = mousePositionToGridTile(grid_params, pyg.mouse.get_pos(), b.size)
                 if pos is not None:
                     b.update(turn, pos)
@@ -135,9 +136,13 @@ def run():
         pyg.display.update()
 
         clock.tick(60)
+
         if turn == 1:
+            #start = time.time_ns()
             b.update(1,ai1.minimax(b))
             turn = 2
+            #end = time.time_ns()
+            #print("MiniMax time : ", end - start, "ns")
         else:
             b.update(2,ai2.minimax(b))
             turn = 1
@@ -158,6 +163,7 @@ fullscreen = False
 pvp_on_start = True
 console = False
 game_number = 0
+start_size = 0
 
 
 # -------------------------END OF GLOBAL VARIABLES--------------------
