@@ -62,7 +62,7 @@ class Board:
             if self.tiles[x * (self.size + 1)] == player: counter += 1
         if counter == self.size: return True
         counter = 0
-        for x in range(1, 4):
+        for x in range(1,self.size+1):
             if self.tiles[x * (self.size - 1)] == player: counter += 1
         if counter == self.size: return True
         return False
@@ -108,10 +108,72 @@ class Board:
         return self.tiles
 
     @staticmethod
-    def copy(origin,player=None, index = None):
-        if(player is None or index is None):
+    def copy(origin, player=None, index=None):
+        if player is None or index is None:
             return copy.deepcopy(origin)
         else:
             new_board = copy.deepcopy(origin)
             new_board.update(player,index)
             return new_board
+
+# --------------------------------------------------------------------
+
+    def evaluateVertical(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter = 0
+        tmp_counter = 0
+        for y in range(self.size):
+            tmp_counter += counter
+            counter = 0
+            for x in range(self.size):
+                if self.tiles[y + x*self.size] == player: counter += 2
+                elif self.tiles[y + x*self.size] == opponent:
+                    counter = 0
+                    break
+                else: counter += 1
+        return tmp_counter
+
+    def evaluateHorizontal(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter = 0
+        tmp_counter = 0
+        for x in range(self.size):
+            tmp_counter += counter
+            counter = 0
+            for y in range(self.size):
+                if self.tiles[y + x*self.size] == player: counter += 2
+                elif self.tiles[y + x*self.size] == opponent:
+                    counter = 0
+                    break
+                else: counter += 1
+        return tmp_counter
+
+    def evaluateDiagonal(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter1 = 0
+        counter2 = 0
+        for x in range(self.size):
+            if self.tiles[x * (self.size + 1)] == player: counter1 += 2
+            elif self.tiles[x * (self.size+1)] == opponent:
+                counter1 = 0
+                break
+            else:
+                counter1 += 1
+        for x in range(1,self.size+1):
+            if self.tiles[x * (self.size - 1)] == player: counter2 += 2
+            elif self.tiles[x * (self.size - 1)] == opponent:
+                counter2 = 0
+                break
+            else:
+                counter2 += 1
+        return counter1 + counter2
+
+    def evaluate(self,player):
+        print("eval")
+        if self.checkForEndgame() == player: return 100*self.size
+        return self.evaluateVertical(player)+self.evaluateHorizontal(player)+self.evaluateHorizontal(player)
+
+

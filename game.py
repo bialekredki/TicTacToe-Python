@@ -143,9 +143,9 @@ def run():
             turn = 2
             #end = time.time_ns()
             #print("MiniMax time : ", end - start, "ns")
-        else:
-            b.update(2,ai2.minimax(b))
-            turn = 1
+        #else:
+            #b.update(2,ai2.minimax(b))
+            #turn = 1
 
     # -------------------------end of main loop-----------------------
 

@@ -34,5 +34,12 @@ def AITest0():
     print(ai_player.minimax(b))
     print(b.getState()[4])
 
-print(EndConditionTest3())
-AITest0()
+def evalTest():
+    test0 = [1,1,2 ,0,1,0, 0,0,0]
+    b = ttt_board.Board(test0,size=3)
+    b.display()
+    print(b.evaluate(1))
+
+#print(EndConditionTest3())
+# AITest0()
+evalTest()
