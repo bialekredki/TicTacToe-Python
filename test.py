@@ -35,10 +35,18 @@ def AITest0():
     print(b.getState()[4])
 
 def evalTest():
-    test0 = [1,1,2 ,0,1,0, 0,0,0]
-    b = ttt_board.Board(test0,size=3)
+    ai_player = ttt_ai.AI(1)
+    test0 = [1,0,1, 2,2,0, 0,0,0]
+    test1 = [1,0,0, 2,2,1, 0,0,0]
+    b = ttt_board.Board(test1,size=3)
     b.display()
-    print(b.evaluate(1))
+    print("Eval v",b.evaluateVertical(1))
+    print("Eval h", b.evaluateHorizontal(1))
+    print("Eval d", b.evaluateDiagonal(1))
+    print("Eval -v",b.evaluateVertical(2))
+    print("Eval -h", b.evaluateHorizontal(2))
+    print("Eval -d", b.evaluateDiagonal(2))
+    print("Eval", b.evaluate(1))
 
 #print(EndConditionTest3())
 # AITest0()

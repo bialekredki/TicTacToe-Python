@@ -1,6 +1,7 @@
 # class containing operations on board
 
 import copy
+import math
 
 # tiles, when 0 tile is empty, when 1 or 2 tile is occupied by player 1 or 2
 class Board:
@@ -45,7 +46,8 @@ class Board:
             counter = 0
             for x in range(self.size):
                 if self.tiles[self.size * x + y] == player: counter += 1
-            if counter == self.size: return True
+            if counter == self.size:
+                return True
         return False
 
     def checkForHorizontal(self, player):
@@ -122,33 +124,35 @@ class Board:
         if player == 1: opponent = 2
         else: opponent = 1
         counter = 0
-        tmp_counter = 0
+        eval = 0
         for y in range(self.size):
-            tmp_counter += counter
+            if counter == self.size or counter - 1 == self.size: return math.inf
+            eval += counter
             counter = 0
             for x in range(self.size):
-                if self.tiles[y + x*self.size] == player: counter += 2
+                if self.tiles[y + x*self.size] == player: counter += 1
                 elif self.tiles[y + x*self.size] == opponent:
                     counter = 0
                     break
-                else: counter += 1
-        return tmp_counter
+        eval += counter
+        return eval
 
     def evaluateHorizontal(self,player):
         if player == 1: opponent = 2
         else: opponent = 1
         counter = 0
-        tmp_counter = 0
+        eval = 0
         for x in range(self.size):
-            tmp_counter += counter
+            if counter == self.size or counter - 1 == self.size: return math.inf
+            eval += counter
             counter = 0
             for y in range(self.size):
-                if self.tiles[y + x*self.size] == player: counter += 2
+                if self.tiles[y + x*self.size] == player: counter += 1
                 elif self.tiles[y + x*self.size] == opponent:
                     counter = 0
                     break
-                else: counter += 1
-        return tmp_counter
+        eval += counter
+        return eval
 
     def evaluateDiagonal(self,player):
         if player == 1: opponent = 2
@@ -156,24 +160,22 @@ class Board:
         counter1 = 0
         counter2 = 0
         for x in range(self.size):
-            if self.tiles[x * (self.size + 1)] == player: counter1 += 2
+            if self.tiles[x * (self.size + 1)] == player: counter1 += 1
             elif self.tiles[x * (self.size+1)] == opponent:
                 counter1 = 0
                 break
-            else:
-                counter1 += 1
         for x in range(1,self.size+1):
-            if self.tiles[x * (self.size - 1)] == player: counter2 += 2
+            if self.tiles[x * (self.size - 1)] == player: counter2 += 1
             elif self.tiles[x * (self.size - 1)] == opponent:
                 counter2 = 0
                 break
-            else:
-                counter2 += 1
         return counter1 + counter2
 
     def evaluate(self,player):
-        print("eval")
-        if self.checkForEndgame() == player: return 100*self.size
-        return self.evaluateVertical(player)+self.evaluateHorizontal(player)+self.evaluateHorizontal(player)
+        if player == 1: opponent = 2
+        else: opponent = 1
+        if self.checkForEndgame() == player: return math.inf
+        return (self.evaluateVertical(player)+self.evaluateHorizontal(player)+self.evaluateDiagonal(player)-
+                self.evaluateVertical(opponent)-self.evaluateHorizontal(opponent)-self.evaluateDiagonal(opponent))
 
 
