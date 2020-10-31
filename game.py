@@ -13,6 +13,18 @@ import ttt_console
 
 # ----------------------------END OF IMPORTS--------------------------
 
+def wait():
+    close = False
+    while not close:
+        for event in pyg.event.get():
+            if event.type == pyg.MOUSEBUTTONDOWN:
+                close = True
+            elif event.type == pyg.QUIT:
+                closed = True
+                pyg.display.quit()
+                pyg.quit()
+
+
 def setResolution(str_value:str,value:int):
     global width, height
     if value == 0:
@@ -112,6 +124,10 @@ def run():
         if current_result != -1:
             score[current_result] += 1
             game_number = game_number + 1
+            b.display()
+            clock.tick(60)
+            pyg.display.update()
+            #wait()
             return 0
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
@@ -143,10 +159,9 @@ def run():
             turn = 2
             #end = time.time_ns()
             #print("MiniMax time : ", end - start, "ns")
-        else:
-            b.update(2,ai2.minimax(b))
-            turn = 1
-
+        #else:
+            #b.update(2,ai2.minimax(b))
+            #turn = 1
     # -------------------------end of main loop-----------------------
 
 # -------------------------GLOBAL VARIABLES---------------------------

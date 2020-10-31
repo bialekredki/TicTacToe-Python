@@ -1,6 +1,7 @@
 # class containing operations on board
 
 import copy
+import math
 
 # tiles, when 0 tile is empty, when 1 or 2 tile is occupied by player 1 or 2
 class Board:
@@ -45,7 +46,8 @@ class Board:
             counter = 0
             for x in range(self.size):
                 if self.tiles[self.size * x + y] == player: counter += 1
-            if counter == self.size: return True
+            if counter == self.size:
+                return True
         return False
 
     def checkForHorizontal(self, player):
@@ -62,7 +64,7 @@ class Board:
             if self.tiles[x * (self.size + 1)] == player: counter += 1
         if counter == self.size: return True
         counter = 0
-        for x in range(1, 4):
+        for x in range(1,self.size+1):
             if self.tiles[x * (self.size - 1)] == player: counter += 1
         if counter == self.size: return True
         return False
@@ -108,10 +110,72 @@ class Board:
         return self.tiles
 
     @staticmethod
-    def copy(origin,player=None, index = None):
-        if(player is None or index is None):
+    def copy(origin, player=None, index=None):
+        if player is None or index is None:
             return copy.deepcopy(origin)
         else:
             new_board = copy.deepcopy(origin)
             new_board.update(player,index)
             return new_board
+
+# --------------------------------------------------------------------
+
+    def evaluateVertical(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter = 0
+        eval = 0
+        for y in range(self.size):
+            if counter == self.size or counter - 1 == self.size: return math.inf
+            eval += counter
+            counter = 0
+            for x in range(self.size):
+                if self.tiles[y + x*self.size] == player: counter += 1
+                elif self.tiles[y + x*self.size] == opponent:
+                    counter = 0
+                    break
+        eval += counter
+        return eval
+
+    def evaluateHorizontal(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter = 0
+        eval = 0
+        for x in range(self.size):
+            if counter == self.size or counter - 1 == self.size: return math.inf
+            eval += counter
+            counter = 0
+            for y in range(self.size):
+                if self.tiles[y + x*self.size] == player: counter += 1
+                elif self.tiles[y + x*self.size] == opponent:
+                    counter = 0
+                    break
+        eval += counter
+        return eval
+
+    def evaluateDiagonal(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        counter1 = 0
+        counter2 = 0
+        for x in range(self.size):
+            if self.tiles[x * (self.size + 1)] == player: counter1 += 1
+            elif self.tiles[x * (self.size+1)] == opponent:
+                counter1 = 0
+                break
+        for x in range(1,self.size+1):
+            if self.tiles[x * (self.size - 1)] == player: counter2 += 1
+            elif self.tiles[x * (self.size - 1)] == opponent:
+                counter2 = 0
+                break
+        return counter1 + counter2
+
+    def evaluate(self,player):
+        if player == 1: opponent = 2
+        else: opponent = 1
+        if self.checkForEndgame() == player: return math.inf
+        return (self.evaluateVertical(player)+self.evaluateHorizontal(player)+self.evaluateDiagonal(player)-
+                self.evaluateVertical(opponent)-self.evaluateHorizontal(opponent)-self.evaluateDiagonal(opponent))
+
+

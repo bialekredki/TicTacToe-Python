@@ -3,4 +3,4 @@ height = 600
 fullscreen = False
 pvp_on_start = False
 console = False
-start_size = 4
+start_size = 5
