@@ -1,6 +1,6 @@
 width = 800
 height = 600
-fullscreen = False
-pvp_on_start = False
+game_mode = 0
 console = False
-start_size = 5
+start_size = 3
+resolution = 0

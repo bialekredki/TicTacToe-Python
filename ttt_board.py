@@ -21,10 +21,10 @@ class Board:
             copy.deepcopy(origin)
 
     def checkForEndgame(self):
-        if self.checkForDraw():
-            return 0
         for player in range(2):
             if self.checkForWin(player + 1):  return player + 1
+        if self.checkForDraw():
+            return 0
         return -1
 
     def checkForDraw(self):

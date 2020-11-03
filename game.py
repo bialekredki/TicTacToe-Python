@@ -50,16 +50,42 @@ def drawSideBar(main_font:pyg.font,turn:int):
     return menu_button_size
 
 
-def mainMenu(main_font:pyg.font):
+def mainMenu(main_font:pyg.font, menu_button_size):
     close = False
+    option = 0
+    local_resolution = (width, height)
+    local_resolution_option = resolution
+    local_size = start_size
+    local_mode = game_mode
+    local_console = console
+
     while not close:
         for event in pyg.event.get():
             if event.type == pyg.MOUSEBUTTONDOWN:
                 close = True
+            if event.type == pyg.KEYDOWN:
+                if event.key == pyg.K_RIGHT:
+                    if option+1 > len(menu_button_size):
+                        option = 0
+                    else:
+                        option += 1
+                if event.key == pyg.K_ESCAPE:
+                    close = True
         display.fill(BLACK)
+        display.blit(main_font.render("Use left and right arrow keys to navigate between options", True, WHITE), (0,0))
+        display.blit(main_font.render("Use up and down arrow keys to change settings", True, WHITE), (0, menu_button_size[1]))
+        display.blit(main_font.render("Press mouse button or ESC to exit menu", True, WHITE), (0,menu_button_size[1]*2))
+        display.blit(main_font.render("Current option: {}".format(main_menu_options[option]),True,WHITE), (0,menu_button_size[1]*3))
+        if option == 0:
+            display.blit(main_font.render(resolution_options[local_resolution_option], True, WHITE), (0,menu_button_size[1]*4))
+        elif option == 1:
+            display.blit(main_font.render(game_mode_options[local_mode], True, WHITE),
+                         (0, menu_button_size[1] * 4))
+        elif option == 2:
+            display.blit(main_font.render("{}".format(local_size), True, WHITE), (0,menu_button_size[1]*4))
         pyg.display.update()
 
-
+    # apply changes
 
 def endMenu(result:int=0):
     pass
@@ -144,7 +170,7 @@ def run():
                         turn = 1
                 elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[1]:
                     print("XD")
-                    mainMenu(main_font)
+                    mainMenu(main_font,menu_button_size)
 
         display.fill(BLACK)
         drawGrid(grid_params, b, xo_font)
@@ -175,10 +201,16 @@ width = 800
 height = 600
 score = [0,0,0]
 fullscreen = False
-pvp_on_start = True
+game_mode = 0
 console = False
 game_number = 0
 start_size = 0
+
+resolution = 0
+main_menu_options = ["Resolution", "Game mode", "Board's size", "Enable console"]
+resolution_options = ["800x600", "1280x720", "1280x1024"]
+game_mode_options = ["Player x AI", "Player x Player", "AI x AI"]
+
 
 
 # -------------------------END OF GLOBAL VARIABLES--------------------

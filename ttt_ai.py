@@ -12,7 +12,7 @@ class AI:
         new_state = ttt_board.Board.copy(state)
 
         possible_moves = self.findPossibleMoves(new_state.getState())
-        if max_depth is None and len(possible_moves) > 5: max_depth = len(possible_moves) // new_state.size
+        if max_depth is None and len(possible_moves) > 5 and new_state.size != 3: max_depth = len(possible_moves) // new_state.size
 
         result = new_state.checkForEndgame()
         if len(possible_moves) == 0 or result != -1:
@@ -20,7 +20,7 @@ class AI:
             elif result == self.ai_player: return 1
             else: return -1
 
-        #if len(possible_moves) == 9 and new_state.size == 3:    return 4
+        if len(possible_moves) == 9 and new_state.size == 3:    return 4
         #if len(possible_moves) == math.pow(new_state.size,2): return 0
 
         if player is None: player = self.ai_player
@@ -31,13 +31,13 @@ class AI:
 
         if depth > 0:
             #print(depth)
-            if depth == max_depth:
-                if maximizer: return new_state.evaluate(player)
-                else: return new_state.evaluate(player)*(-1)
+            #if depth == max_depth:
+                #if maximizer: return new_state.evaluate(player)
+                #else: return new_state.evaluate(player)*(-1)
             if maximizer:
-                best_value = -2
+                best_value = -math.inf
             else:
-                best_value = 2
+                best_value = math.inf
             for move in possible_moves:
                 result = self.minimax(ttt_board.Board.copy(new_state, player, move), next_player, depth + 1,
                                       not maximizer, alpha, beta, max_depth)
