@@ -9,7 +9,7 @@ def EndConditionTest3():
     test2 = [1, 0, 0, 0, 1, 0, 0, 1, 1] # diagonal win for player 1
     test3 = [1, 2, 1, 2, 1, 2, 2, 1, 2] # draw
     test4 = [0, 0, 2, 0, 2, 0, 2, 0, 0] # diagonal win for player 2
-    test5 = [0, 0, 2, 0, 2, 0, 1, 0, 0] # game continues
+    test5 = [0, 0, 2, 0, 2, 0, 1, 0, 0] # game continues //0 1 2 // 3 4 5 // 6 7 8
     print(ttt_board.Board(test3, size).checkForEndgame())
     if(
         ttt_board.Board(test0, size).checkForEndgame() == 2 and
@@ -39,7 +39,8 @@ def evalTest():
     ai_player = ttt_ai.AI(1)
     test0 = [1,0,1, 2,2,0, 0,0,0]
     test1 = [1,0,0, 2,2,1, 0,0,0]
-    b = ttt_board.Board(test1,size=3)
+    test2 = [2,0,0,1, 0,2,0,1, 0,0,0,1, 0,0,0,2]
+    b = ttt_board.Board(test2,size=4)
     b.display()
     print("Eval v",b.evaluateVertical(1))
     print("Eval h", b.evaluateHorizontal(1))
@@ -49,6 +50,6 @@ def evalTest():
     print("Eval -d", b.evaluateDiagonal(2))
     print("Eval", b.evaluate(1))
 
-print(EndConditionTest3())
+#print(EndConditionTest3())
 # AITest0()
-#evalTest()
+evalTest()

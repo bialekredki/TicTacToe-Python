@@ -72,10 +72,13 @@ def mainMenu(main_font:pyg.font, menu_button_size):
                 if event.key == pyg.K_ESCAPE:
                     close = True
         display.fill(BLACK)
+        # -----------------------------------------------UNCHANGAEBLE PART---------------------------------------------
         display.blit(main_font.render("Use left and right arrow keys to navigate between options", True, WHITE), (0,0))
         display.blit(main_font.render("Use up and down arrow keys to change settings", True, WHITE), (0, menu_button_size[1]))
         display.blit(main_font.render("Press mouse button or ESC to exit menu", True, WHITE), (0,menu_button_size[1]*2))
         display.blit(main_font.render("Current option: {}".format(main_menu_options[option]),True,WHITE), (0,menu_button_size[1]*3))
+
+        # ---------------------------------------------OPTIONS-----------------------------------------------------------
         if option == 0:
             display.blit(main_font.render(resolution_options[local_resolution_option], True, WHITE), (0,menu_button_size[1]*4))
         elif option == 1:
@@ -133,8 +136,12 @@ def run():
     }
     grid_params["start x"] = (width - grid_params["width"]) // 2
     grid_params["start y"] = (height - grid_params["height"]) // 2
-    grid_params["block size"] = int(
-        math.sqrt(grid_params["width"] * grid_params["height"] // (b.size * b.size)))
+    grid_params["block size"] = grid_params["height"]//b.size
+    print(grid_params["width"])
+    print(grid_params["height"])
+    print(grid_params["start x"])
+    print(grid_params["start y"])
+    print(grid_params["block size"])
     # ---------------------end of initialization----------------------
     if game_number % 2 == 0:
         turn = 1
@@ -146,15 +153,6 @@ def run():
     space = False
     # -------------------------main loop------------------------------
     while not closed:
-        current_result = b.checkForEndgame()
-        if current_result != -1:
-            score[current_result] += 1
-            game_number = game_number + 1
-            b.display()
-            clock.tick(60)
-            pyg.display.update()
-            #wait()
-            return 0
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
                 closed = True
@@ -178,6 +176,17 @@ def run():
         pyg.display.update()
 
         clock.tick(60)
+
+        current_result = b.checkForEndgame()
+        if current_result != -1:
+            score[current_result] += 1
+            game_number = game_number + 1
+            if current_result > 0:
+                b.display()
+            clock.tick(60)
+            pyg.display.update()
+            # wait()
+            return 0
 
         if turn == 1:
             #start = time.time_ns()
@@ -205,19 +214,19 @@ game_mode = 0
 console = False
 game_number = 0
 start_size = 0
-
 resolution = 0
-main_menu_options = ["Resolution", "Game mode", "Board's size", "Enable console"]
-resolution_options = ["800x600", "1280x720", "1280x1024"]
-game_mode_options = ["Player x AI", "Player x Player", "AI x AI"]
 
-
-
+main_menu_options = ("Resolution", "Game mode", "Board's size", "Enable console")
+resolution_options = ("800x600", "1280x720", "1280x1024")
+resolutions = ((800,600),(1270,720),(1280,1024))
+game_mode_options = ("Player x AI", "Player x Player", "AI x AI")
 # -------------------------END OF GLOBAL VARIABLES--------------------
 
 config = open("config", 'r')
 for x in config:    exec(x)
 config.close()
+width = resolutions[resolution][0]
+height = resolutions[resolution][1]
 while True:
     if pyg.display is None: break
     if not console:
