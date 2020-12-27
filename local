@@ -1,0 +1,20 @@
+window;TicTacToe
+players_turn;Player {}'s turn({})
+player1_score;Player 1 : {}
+player2_score;Player 2 : {}
+draw_score;Draw : {}
+menu;MENU
+exit;EXIT
+menu_instruction_1;Use up and down arrow keys to navigate between options
+menu_instruction_2;Right and left arrow keys to change settings
+menu_instruction_3;Press ENTER to apply or ESC to discard changes
+menu_resolution;Resolution
+menu_board_size;Board size
+menu_game_mode;Game mode
+menu_console;Play in console
+menu_fullscreen;Fullscreen
+opt_resolution;800x600;1280x720;1280x1024;Screen resolution
+opt_board_size;3;4;5;6;7;8;9
+opt_game_mode;Player x AI;Player x Player;AI x AI
+opt_console;False;True
+opt_fullscreen;False;True
