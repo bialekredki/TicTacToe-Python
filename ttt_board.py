@@ -6,7 +6,7 @@ import math
 # tiles, when 0 tile is empty, when 1 or 2 tile is occupied by player 1 or 2
 class Board:
 
-    def __init__(self, test=None, size=3, origin=None):
+    def __init__(self, test:list=None, size:int=3, origin=None):
         if origin is None:
             if test is None:
                 test = [0, 0, 0, 0, 0, 0, 0, 0, 0]
