@@ -1,5 +1,6 @@
 import ttt_board
 import ttt_ai
+import pickle
 
 
 def EndConditionTest3():
@@ -40,16 +41,36 @@ def evalTest():
     test0 = [1,0,1, 2,2,0, 0,0,0]
     test1 = [1,0,0, 2,2,1, 0,0,0]
     test2 = [2,0,0,1, 0,2,0,1, 0,0,0,1, 0,0,0,2]
-    b = ttt_board.Board(test2,size=4)
+    b = ttt_board.Board(test2, size=4)
     b.display()
-    print("Eval v",b.evaluateVertical(1))
+    print("Eval v", b.evaluateVertical(1))
     print("Eval h", b.evaluateHorizontal(1))
     print("Eval d", b.evaluateDiagonal(1))
-    print("Eval -v",b.evaluateVertical(2))
+    print("Eval -v", b.evaluateVertical(2))
     print("Eval -h", b.evaluateHorizontal(2))
     print("Eval -d", b.evaluateDiagonal(2))
     print("Eval", b.evaluate(1))
 
-#print(EndConditionTest3())
-# AITest0()
-evalTest()
+
+def XD():
+    test0 = [1, 0, 1, 2, 2, 0, 0, 0, 0]
+    b = ttt_board.Board(test0, size=3)
+    print(b.update(1, 0))
+
+
+def save_cache():
+    for x in range(3, 10):
+        filename = "cache{}".format(x)
+        b = ttt_board.Board(size=3)
+        aix = ttt_ai.AI(1, 'X')
+        aio = ttt_ai.AI(2, 'O')
+        while b.checkForEndgame():
+            b.update(aix.is_x(), aix.minimax(b))
+            b.update(aio.is_x(), aio.minimax(b))
+        print("CACHE lenght : ", len(aix.CACHE))
+        f = open(filename, 'wb')
+        pickle.dump(aix.CACHE, f)
+        f.close()
+
+
+save_cache()

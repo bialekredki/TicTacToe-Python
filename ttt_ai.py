@@ -6,14 +6,23 @@ import ttt_player
 
 
 # ---------------end of includes---------------------------
+
+
 class AI(ttt_player.Player):
     CACHE = {}
 
-    def __init__(self, player_number:int):
-        super().__init__(player_number)
+    def __init__(self, player_number: int, symbol: chr):
+        super().__init__(player_number, symbol)
 
-    def isAI(self):
+    def is_AI(self):
         return True
+
+    def is_x(self):
+        return super().is_x()
+
+    def set_cache(self, cache):
+        global CACHE
+        CACHE = cache
 
     def minimax(self, state: ttt_board.Board, player=None, depth=0, maximizer=True, alpha=-math.inf, beta=math.inf,
                 max_depth=None):
@@ -32,7 +41,7 @@ class AI(ttt_player.Player):
             if result == 0:
                 AI.CACHE[cache_state] = 0
                 return 0
-            elif result == self.ai_player:
+            elif result == self.player_number:
                 AI.CACHE[cache_state] = 1
                 return 1
             else:
@@ -42,7 +51,7 @@ class AI(ttt_player.Player):
         # if len(possible_moves) == 9 and new_state.size == 3:    return 4
         # if len(possible_moves) == math.pow(new_state.size,2): return random.randrange(0, (math.pow(new_state.size, 2)))
 
-        if player is None: player = self.ai_player
+        if player is None: player = self.player_number
         if player == 1:
             next_player = 2
         else:

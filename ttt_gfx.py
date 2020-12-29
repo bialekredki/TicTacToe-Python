@@ -9,6 +9,7 @@ import pygame as pyg
 import consts
 import ttt_board
 import centeredText as centxt
+import ttt_player
 
 
 def determine_colour(option:int, value:int):
@@ -24,7 +25,7 @@ class GameWindow():
         pyg.display.set_caption(local["window"])
         pyg.font.init()
         self.main_font = pyg.font.SysFont("Comic Sans", 30)
-        self.xo_font = pyg.font.SysFont("Comic Sans", 270 - 70 * (board_size - 3))
+        self.xo_font = pyg.font.SysFont("Comic Sans", self.display.get_width() // 4 - 70 * (board_size - 3))
         self.clock = pyg.time.Clock()
         self.frame_rate = frame_rate
 
@@ -55,18 +56,19 @@ class GameWindow():
                 else:
                     continue
 
-    def draw_side_bar(self, turn: int, score:tuple):
+    def draw_side_bar(self, player: ttt_player.Player, score: tuple):
         self.display.blit(self.main_font.render(self.local["menu"], True, consts.WHITE), (0, 0))
         menu_button_size = self.main_font.size("MENU")
-        if turn == 1:
-            xo = 'X'
-        else:
-            xo = 'O'
-        self.display.blit(self.main_font.render(self.local["players_turn"].format(turn, xo), True, consts.WHITE), (0, menu_button_size[1]))
-        self.display.blit(self.main_font.render(self.local["player1_score"].format(score[1]), True, consts.WHITE), (self.display.get_width() // 2, 0))
-        self.display.blit(self.main_font.render(self.local["player2_score"].format(score[2]), True, consts.WHITE), (self.display.get_width() // 2, menu_button_size[1]))
-        self.display.blit(self.main_font.render(self.local["draw_score"].format(score[0]), True, consts.WHITE), (self.display.get_width() // 2, menu_button_size[1] * 2))
-        self.display.blit(self.main_font.render(self.local["exit"], True, consts.CRIMSON), (0,menu_button_size[1]*2))
+        self.display.blit(
+            self.main_font.render(self.local["players_turn"].format(player.player_number, player.symbol), True,
+                                  consts.WHITE), (0, menu_button_size[1]))
+        self.display.blit(self.main_font.render(self.local["player1_score"].format(score[1]), True, consts.WHITE),
+                          (self.display.get_width() // 2, 0))
+        self.display.blit(self.main_font.render(self.local["player2_score"].format(score[2]), True, consts.WHITE),
+                          (self.display.get_width() // 2, menu_button_size[1]))
+        self.display.blit(self.main_font.render(self.local["draw_score"].format(score[0]), True, consts.WHITE),
+                          (self.display.get_width() // 2, menu_button_size[1] * 2))
+        self.display.blit(self.main_font.render(self.local["exit"], True, consts.CRIMSON), (0, menu_button_size[1] * 2))
 
 
     def get_menu_button_size(self):

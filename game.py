@@ -9,16 +9,38 @@ import ttt_player
 import ttt_board
 import ttt_console
 
-def setup_players(game_mode:int=0):
-    if game_mode == 0:
-        return ttt_player.Player(1), ttt_ai.AI(2)
-    elif game_mode == 1:
-        return ttt_player.Player(1), ttt_player(2)
-    else:
-        return ttt_ai.AI(1), ttt_ai(2)
 
-def player_move(player,console:bool=False):
-    if player.isAI():
+def wait(milisecs: float):
+    diff = 20
+    start = time.time()
+    print(time)
+    while diff < milisecs:
+        diff = time.time() - start
+        print(diff)
+
+
+def switch_turn(turn):
+    if turn == 1:
+        return 2
+    else:
+        return 1
+
+
+def setup_players(game_mode: int = 0, game_number: int = 0):
+    if game_number % 2 == 0:
+        char_set = ('X', 'O')
+    else:
+        char_set = ('O', 'X')
+    if game_mode == 0:
+        return ttt_player.Player(1, char_set[0]), ttt_ai.AI(2, char_set[1])
+    elif game_mode == 1:
+        return ttt_player.Player(1, char_set[0]), ttt_player.Player(2, char_set[1])
+    else:
+        return ttt_ai.AI(2, char_set[0]), ttt_ai.AI(1, char_set[1])
+
+
+def player_move(player, console: bool = False):
+    if player.is_AI():
         return player.minimax()
     else:
         if console:
@@ -97,7 +119,12 @@ def run():
     # -------------------------main loop------------------------------
     while not closed:
         if player1 is None or player2 is None:
-            player1,player2 = setup_players(game_mode)
+            player1, player2 = setup_players(game_mode, game_number)
+
+        if turn % 2 == 1:
+            current_player = player1
+        else:
+            current_player = player2
         # When console mode is off, render graphics and wait for events
         if not console:
             for event in pyg.event.get():
@@ -106,18 +133,17 @@ def run():
                     window.close()
                     closed = True
                 # Player's interaction events
-                elif event.type == pyg.MOUSEBUTTONDOWN and turn == 2:
-                    pos = ttt_gfx.mousePositionToGridTile(window.calculate_grid_parameters(b.size), pyg.mouse.get_pos(), b.size)
+                elif event.type == pyg.MOUSEBUTTONDOWN:
+                    pos = ttt_gfx.mousePositionToGridTile(window.calculate_grid_parameters(b.size), pyg.mouse.get_pos(),
+                                                          b.size)
                     menu_button_size = window.get_menu_button_size()
-                    if pos is not None:
-                        b.update(turn, pos)
-                        if turn == 1:
-                            turn = 2
-                        else:
-                            turn = 1
+                    if pos is not None and not current_player.is_AI():
+                        if b.update(current_player.is_x(), pos):
+                            turn = switch_turn(turn)
                     elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[1]:
                         menu = True
-                    elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[1]*3:
+                    elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[
+                        1] * 3:
                         window.close()
                 elif menu:
                     option = process_menu_event(event, option,option_set)
@@ -142,21 +168,26 @@ def run():
                     elif option == -1:
                         option_set = copy.deepcopy(previous_options_set)
 
-            if not menu:
+            if not menu and not console:
                 # Display game screen
-                window.render(board=b,game_params=(turn,score))
-            else:
+                window.render(board=b, game_params=(current_player, score))
+            elif menu and not console:
                 # Display game menu screen
-                window.render(menu_params=(option,option_set[0],option_set[1],option_set[2],option_set[3],option_set[4]))
+                window.render(
+                    menu_params=(option, option_set[0], option_set[1], option_set[2], option_set[3], option_set[4]))
         current_result = b.checkForEndgame()
         if current_result != -1:
+            b.display()
             score[current_result] += 1
             game_number = game_number + 1
-            b = ttt_board.Board(size=option_set[1]+3)
+            b = ttt_board.Board(size=option_set[1] + 3)
             continue
 
-        if player1.player_number == 1 and turn%2 == 1:
-            player_move(player1,)
+        if current_player.is_AI():
+            print(current_player.is_x(), '\t', current_player.minimax(b))
+            b.update(current_player.is_x(), current_player.minimax(b))
+            turn = switch_turn(turn)
+            time.sleep(1)
 
     # -------------------------end of main loop-----------------------
 
