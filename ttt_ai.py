@@ -2,19 +2,23 @@
 import ttt_board
 import math
 import random
+import ttt_player
 
 
 # ---------------end of includes---------------------------
-class AI:
+class AI(ttt_player.Player):
     CACHE = {}
-    def __init__(self, player: int):
-        self.ai_player = player
 
+    def __init__(self, player_number:int):
+        super().__init__(player_number)
 
+    def isAI(self):
+        return True
 
-    def minimax(self, state: ttt_board.Board, player=None, depth=0, maximizer=True, alpha=-math.inf, beta=math.inf, max_depth=None):
+    def minimax(self, state: ttt_board.Board, player=None, depth=0, maximizer=True, alpha=-math.inf, beta=math.inf,
+                max_depth=None):
         new_state = ttt_board.Board.copy(state)
-        cache_state = (tuple(new_state.getState()),  maximizer)
+        cache_state = (tuple(new_state.getState()), maximizer)
         if cache_state not in AI.CACHE.keys():
             AI.CACHE[cache_state] = None
         elif AI.CACHE[cache_state] is not None and depth != 0:
@@ -35,8 +39,8 @@ class AI:
                 AI.CACHE[cache_state] = -1
                 return -1
 
-        #if len(possible_moves) == 9 and new_state.size == 3:    return 4
-        #if len(possible_moves) == math.pow(new_state.size,2): return random.randrange(0, (math.pow(new_state.size, 2)))
+        # if len(possible_moves) == 9 and new_state.size == 3:    return 4
+        # if len(possible_moves) == math.pow(new_state.size,2): return random.randrange(0, (math.pow(new_state.size, 2)))
 
         if player is None: player = self.ai_player
         if player == 1:
@@ -45,10 +49,7 @@ class AI:
             next_player = 1
 
         if depth > 0:
-            #print(depth)
-            #if depth == max_depth:
-                #if maximizer: return new_state.evaluate(player)
-                #else: return -new_state.evaluate(player)
+            # print(depth)
             if maximizer:
                 best_value = -math.inf
             else:
@@ -73,7 +74,7 @@ class AI:
             results = []
             for move in possible_moves:
                 result = self.minimax(ttt_board.Board.copy(new_state, player, move), next_player, depth + 1,
-                                      not maximizer, alpha, beta,max_depth)
+                                      not maximizer, alpha, beta, max_depth)
                 if counter == 0:
                     maximum = result
                     best_move = move
@@ -91,4 +92,3 @@ class AI:
                 result.append(counter)
             counter += 1
         return result
-

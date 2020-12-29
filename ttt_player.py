@@ -1,9 +1,12 @@
 class Player:
 
-    def __init__(self, number):
-        self.number = number
+    def __init__(self, player_number:int):
+        self.player_number = player_number
 
-    def makeMove(self, size):
+    def isAI(self):
+        return False
+
+    def make_move_console(self, size):
         print("Player ", self.number, "'s turn")
         while True:
             str_move = input("Choose column(capital letter) and row(number) example : A2, B3 etc.")
