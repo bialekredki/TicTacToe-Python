@@ -121,7 +121,8 @@ class Board:
             return copy.deepcopy(origin)
         else:
             new_board = copy.deepcopy(origin)
-            new_board.update(player,index)
+            if index is not None:
+                new_board.update(player, index)
             return new_board
 
 # --------------------------------------------------------------------

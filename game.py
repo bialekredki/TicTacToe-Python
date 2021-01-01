@@ -9,6 +9,14 @@ import ttt_player
 import ttt_board
 import ttt_console
 
+def switch_symbols(player1, player2):
+    if player1.is_x() == 1:
+        player1.set_symbol('O')
+        player2.set_symbol('X')
+    else:
+        player1.set_symbol('X')
+        player2.set_symbol('O')
+
 
 def wait(milisecs: float):
     diff = 20
@@ -17,7 +25,6 @@ def wait(milisecs: float):
     while diff < milisecs:
         diff = time.time() - start
         print(diff)
-
 
 def switch_turn(turn):
     if turn == 1:
@@ -36,7 +43,7 @@ def setup_players(game_mode: int = 0, game_number: int = 0):
     elif game_mode == 1:
         return ttt_player.Player(1, char_set[0]), ttt_player.Player(2, char_set[1])
     else:
-        return ttt_ai.AI(2, char_set[0]), ttt_ai.AI(1, char_set[1])
+        return ttt_ai.AI(1, char_set[0]), ttt_ai.AI(2, char_set[1])
 
 
 def player_move(player, console: bool = False):
@@ -180,14 +187,20 @@ def run():
             b.display()
             score[current_result] += 1
             game_number = game_number + 1
+            if game_number % 2 == 0:
+                turn = 1
+            else:
+                turn = 2
             b = ttt_board.Board(size=option_set[1] + 3)
+            print(turn, '\t', game_number)
+            switch_symbols(player1, player2)
             continue
 
         if current_player.is_AI():
-            print(current_player.is_x(), '\t', current_player.minimax(b))
-            b.update(current_player.is_x(), current_player.minimax(b))
+            print(current_player.player_number, current_player.is_x())
+            b.update(current_player.is_x(), current_player.minimaxv2(b))
             turn = switch_turn(turn)
-            time.sleep(1)
+            # time.sleep(1)
 
     # -------------------------end of main loop-----------------------
 

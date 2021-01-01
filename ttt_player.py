@@ -7,13 +7,14 @@ class Player:
     def is_AI(self):
         return False
 
-    def set_symbol(self, symbol: chr):
-        self.symbol = symbol
-
     def is_x(self):
         if self.symbol == 'X':
             return 1
         return 2
+
+    def set_symbol(self, symbol: chr = 'X'):
+        if symbol == 'X' or symbol == 'O':
+            self.symbol = symbol
 
     def make_move_console(self, size):
         print("Player ", self.number, "'s turn")
