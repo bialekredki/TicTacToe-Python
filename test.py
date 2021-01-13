@@ -58,7 +58,7 @@ def XD():
     print(b.update(1, 0))
 
 def save_cache():
-    for x in range(3, 4):
+    for x in range(3, 5):
         filename = "cache{}".format(x)
         aix = ttt_ai.AI(1, 'X')
         aio = ttt_ai.AI(2, 'O')
@@ -66,13 +66,13 @@ def save_cache():
         winx = 0
         wino = 0
 
-        for y in range(10):
+        for y in range(100):
             b = ttt_board.Board(size=x)
             moves = []
             while b.checkForEndgame():
-                moves.append(aix.minimaxv2(b))
+                moves.append(aix.minimax(b))
                 b.update(aix.is_x(), moves[-1])
-                moves.append(aio.minimaxv2(b))
+                moves.append(aio.minimax(b))
                 b.update(aio.is_x(), moves[-1])
                 res = b.checkForEndgame()
                 if res > 0:
@@ -89,10 +89,23 @@ def save_cache():
                     break
             print("XD:", y)
         print("CACHE lenght : ", len(aix.CACHE), '\tDraws ', draws, '\tWinx ', winx, '\tWino', wino)
-        f = open(filename, 'wb')
+        f = open(filename, 'wb', encoding="utf8")
         pickle.dump(aix.CACHE, f)
         f.close()
 
 
-save_cache()
+def AITest1():
+    test0 = [1, 1, 0, 0, 0, 0, 0, 0, 0]
+    test1 = [1, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+    ai_player = ttt_ai.AI(1, 'O')
+    b = ttt_board.Board(test=test1, size=4)
+    b.display()
+    b.update(ai_player.is_x(), ai_player.minimaxv2(b))
+    print(ai_player.minimaxv2(b))
+    b.display()
+
+
+# save_cache()
 # AITest0()
+# AITest1()
+save_cache()

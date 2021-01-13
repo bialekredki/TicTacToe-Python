@@ -108,17 +108,22 @@ class GameWindow():
             self.main_font.render("{} : {}".format(self.local["menu_board_size"], self.local["opt_board_size"][menu_params[2]]),
             True, determine_colour(menu_params[0], 1)),(0,menu_button_size[1]*4))
         self.display.blit(
-            self.main_font.render("{} : {}".format(self.local["menu_game_mode"], self.local["opt_game_mode"][menu_params[3]]),
-            True, determine_colour(menu_params[0], 2)),(0,menu_button_size[1]*5))
+            self.main_font.render(
+                "{} : {}".format(self.local["menu_game_mode"], self.local["opt_game_mode"][menu_params[3]]),
+                True, determine_colour(menu_params[0], 2)), (0, menu_button_size[1] * 5))
         self.display.blit(
-            self.main_font.render("{} : {}".format(self.local["menu_console"], self.local["opt_console"][menu_params[4]]),
-            True, determine_colour(menu_params[0], 3)),(0,menu_button_size[1]*6))
+            self.main_font.render(
+                "{} : {}".format(self.local["menu_console"], self.local["opt_console"][menu_params[4]]),
+                True, determine_colour(menu_params[0], 3)), (0, menu_button_size[1] * 6))
         self.display.blit(
             self.main_font.render(
                 "{} : {}".format(self.local["menu_fullscreen"], self.local["opt_fullscreen"][menu_params[5]]),
                 True, determine_colour(menu_params[0], 4)), (0, menu_button_size[1] * 7))
 
-    def close(self,to_console:bool=False):
+    def draw_loading_screen(self):
+        pyg.draw.rect(self.display, consts.WHITE, pyg.Rect(0, 0, self.display.get_width(), self.display.get_height()))
+
+    def close(self, to_console: bool = False):
         pyg.display.quit()
         pyg.quit()
         if not to_console:

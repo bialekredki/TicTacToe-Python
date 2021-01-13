@@ -25,13 +25,19 @@ class AI(ttt_player.Player):
                 max_depth=None):
         # create deepcopy of previous state
         new_state = ttt_board.Board.copy(state)
+        # create cache state to use later as key for CACHE
         cache_state = (tuple(new_state.getState()), maximizer)
+        # check whether this key already exists
+        # if it does then return value that was previously calculated
+        # else append to the global dictionary
         if cache_state not in AI.CACHE.keys():
             AI.CACHE[cache_state] = None
         elif AI.CACHE[cache_state] is not None and depth != 0:
             return AI.CACHE[cache_state]
+        # find possible moves in this position
         possible_moves = self.findPossibleMoves(new_state.getState())
 
+        # check if this position is the of the game
         result = new_state.checkForEndgame()
         if len(possible_moves) == 0 or result != -1:
             if result == 0:
@@ -45,8 +51,9 @@ class AI(ttt_player.Player):
                 return -1
 
         # if len(possible_moves) == 9 and new_state.size == 3:    return 4
-        if len(possible_moves) == 9: return random.randrange(0, 9)
+        # if len(possible_moves) == 9: return random.randrange(0, 9)
 
+        # set players accordingly
         if player is None: player = self.is_x()
         if player == 1:
             next_player = 2

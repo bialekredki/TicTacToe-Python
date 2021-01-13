@@ -2,12 +2,15 @@
 import math
 import time
 import copy
+import os
+import pickle
 import pygame as pyg
 import ttt_gfx
 import ttt_ai
 import ttt_player
 import ttt_board
 import ttt_console
+
 
 def switch_symbols(player1, player2):
     if player1.is_x() == 1:
@@ -56,7 +59,7 @@ def player_move(player, console: bool = False):
             return True
 
 def process_menu_event(event:pyg.event,current_option:int,option_set:tuple):
-    last_options = [3,6,2,1,1]
+    last_options = [3, 2, 2, 1, 1]
     if event.type == pyg.KEYDOWN:
         if event.key == pyg.K_UP:
             if current_option-1 >= 0:
@@ -74,7 +77,8 @@ def process_menu_event(event:pyg.event,current_option:int,option_set:tuple):
         elif event.key == pyg.K_RIGHT:
             if option_set[current_option] + 1 <= last_options[current_option]:
                 option_set[current_option] = option_set[current_option] + 1
-            else: option_set[current_option] = 0
+            else:
+                option_set[current_option] = 0
             return current_option
         elif event.key == pyg.K_ESCAPE:
             return -1
@@ -84,8 +88,40 @@ def process_menu_event(event:pyg.event,current_option:int,option_set:tuple):
         return current_option
 
 
+def read_cache(size: int = 0):
+    if size < 3 or size > 4:
+        size = 0
+    data_dir = 'data\\'
+    ls = os.listdir(data_dir)
+    if size == 0:
+        caches = list()
+        for file in ls:
+            f = open(data_dir + file, 'rb')
+            caches.append(pickle.load(f))
+            f.close()
+        return caches
+    else:
+        for file in ls:
+            if str(size) in file:
+                cache = dict()
+                f = open(data_dir + file, 'rb')
+                print(data_dir + file, f)
+                cache = pickle.load(f)
+                f.close()
+                return cache
+
+
+def save_cache(cache: dict, size: int):
+    if cache is None:
+        return
+    data_dir = 'data\\cache'
+    f = open(data_dir + str(size), 'wb')
+    pickle.dump(cache, f)
+    f.close()
+
+
 def read_local():
-    local_file = open("local",'r')
+    local_file = open("local", 'r')
     local = dict()
     lines = local_file.readlines()
     local_file.close()
@@ -106,6 +142,7 @@ def read_local():
 
 def run():
     global console, score,game_number,game_mode
+    caches = read_cache(start_size)
     # Initializes board
     b = ttt_board.Board(size=start_size)
     # [0]resolution,[1]board size,[2]game mode,[3]console,[4]fullscreen
@@ -125,6 +162,7 @@ def run():
     player2 = None
     # -------------------------main loop------------------------------
     while not closed:
+        # setup players with IDs and symbols(X or O)
         if player1 is None or player2 is None:
             player1, player2 = setup_players(game_mode, game_number)
 
@@ -138,6 +176,7 @@ def run():
                 # PRESS EXIT EVENT
                 if event.type == pyg.QUIT:
                     window.close()
+                    save_cache(ttt_ai.AI.CACHE, option_set[1] + 3)
                     closed = True
                 # Player's interaction events
                 elif event.type == pyg.MOUSEBUTTONDOWN:
@@ -151,6 +190,7 @@ def run():
                         menu = True
                     elif pyg.mouse.get_pos()[0] < menu_button_size[0] and pyg.mouse.get_pos()[1] < menu_button_size[
                         1] * 3:
+                        save_cache(ttt_ai.AI.CACHE, option_set[1] + 3)
                         window.close()
                 elif menu:
                     option = process_menu_event(event, option,option_set)
@@ -162,10 +202,14 @@ def run():
                             window.resize(resolutions[option_set[0]],bool(option_set[4]))
                         # If board size has been changed, create a new empty board and reset all game's parameters
                         if option_set[1] != previous_options_set[1]:
-                            b = ttt_board.Board(size=option_set[1]+3)
+                            new_size = option_set[1] + 3
+                            b = ttt_board.Board(size=new_size)
+                            window.draw_loading_screen()
+                            save_cache(ttt_ai.AI.CACHE, previous_options_set[1] + 3)
+                            ttt_ai.AI.CACHE = read_cache(new_size)
                             turn = 1
                             game_number = 0
-                            score = [0,0,0]
+                            score = [0, 0, 0]
                         # If game mode has been changed, do something
                         if option_set[2] != previous_options_set[2]:
                             pass
@@ -182,25 +226,44 @@ def run():
                 # Display game menu screen
                 window.render(
                     menu_params=(option, option_set[0], option_set[1], option_set[2], option_set[3], option_set[4]))
+        # check for ending game conditions
         current_result = b.checkForEndgame()
+        # if game has concluded
         if current_result != -1:
-            b.display()
-            score[current_result] += 1
+            # Add one to the winning side/draw's count
+            if current_result == 0:
+                score[0] += 1
+            elif current_result == 1:
+                if player1.is_x() == 1:
+                    score[1] += 1
+                else:
+                    score[2] += 1
+            else:
+                if player1.is_x() == 1:
+                    score[2] += 1
+                else:
+                    score[1] += 1
+
+            # Increment game number
             game_number = game_number + 1
+            # If the game number is even set turn to 1 which means player1 is X
             if game_number % 2 == 0:
                 turn = 1
+            # Else set turn to 2 which means player2 is X
             else:
                 turn = 2
+            # Initialize new, empty board
             b = ttt_board.Board(size=option_set[1] + 3)
-            print(turn, '\t', game_number)
+            # Switch players symbols
             switch_symbols(player1, player2)
             continue
 
         if current_player.is_AI():
-            print(current_player.player_number, current_player.is_x())
-            b.update(current_player.is_x(), current_player.minimaxv2(b))
+            if ttt_ai.AI.CACHE is None:
+                ttt_ai.AI.CACHE = read_cache(size=option_set[1] + 3)
+            move = current_player.minimax(b)
+            b.update(current_player.is_x(), move)
             turn = switch_turn(turn)
-            # time.sleep(1)
 
     # -------------------------end of main loop-----------------------
 

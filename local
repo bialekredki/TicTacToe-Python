@@ -14,7 +14,7 @@ menu_game_mode;Game mode
 menu_console;Play in console
 menu_fullscreen;Fullscreen
 opt_resolution;800x600;1280x720;1280x1024;Screen resolution
-opt_board_size;3;4;5;6;7;8;9
+opt_board_size;3;4;5
 opt_game_mode;Player x AI;Player x Player;AI x AI
 opt_console;False;True
 opt_fullscreen;False;True
